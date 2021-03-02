@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 )
 
@@ -36,13 +37,27 @@ func readFromFile(filename string) []int {
 
 func main() {
 	lines := readFromFile("input.txt")
-	m := make(map[int]int)
 	total := 2020
 
-	for _, number := range lines {
-		if val, ok := m[total-number]; ok {
-			fmt.Println(number * val)
+	sort.Ints(lines)
+
+	for i := 0; i < len(lines)-2; i++ {
+		if i == 0 || (i > 0) && lines[i] != lines[i+1] {
+			low := i + 1
+			high := len(lines) - 1
+			rest := total - lines[i]
+			for low < high {
+				sum := lines[low] + lines[high]
+				// found
+				if sum == rest {
+					fmt.Println(lines[low] * lines[high] * lines[i])
+					return
+				} else if sum > rest {
+					high--
+				} else {
+					low++
+				}
+			}
 		}
-		m[number] = number
 	}
 }
